@@ -10,18 +10,31 @@ import static se.magnus.api.event.Event.Type.DELETE;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.utility.DockerImageName;
 import se.magnus.api.core.product.Product;
 import se.magnus.api.event.Event;
 import se.magnus.api.exceptions.InvalidInputException;
 import se.magnus.microservices.core.product.persistence.ProductRepository;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"eureka.client.enabled=false"})
+@AutoConfigureWebTestClient
 class ProductServiceApplicationTests extends MongoDbTestBase {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceApplicationTests.class);
+
+  @Container
+  private static GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse("testcontainers/ryuk:0.14.0"))
+          .withLogConsumer(new Slf4jLogConsumer(LOGGER)); // Streams logs to your test console [17]
 
   @Autowired
   private WebTestClient client;
@@ -31,6 +44,7 @@ class ProductServiceApplicationTests extends MongoDbTestBase {
 
   @Autowired
   @Qualifier("messageProcessor")
+
   private Consumer<Event<Integer, Product>> messageProcessor;
 
   @BeforeEach
@@ -53,6 +67,9 @@ class ProductServiceApplicationTests extends MongoDbTestBase {
 
     getAndVerifyProduct(productId, OK)
       .jsonPath("$.productId").isEqualTo(productId);
+    try {
+      Thread.sleep(60 * 1000);
+    }catch(Exception ignore){}
   }
 
   @Test

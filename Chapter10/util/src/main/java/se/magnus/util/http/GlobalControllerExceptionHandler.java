@@ -21,6 +21,10 @@ class GlobalControllerExceptionHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
+  public GlobalControllerExceptionHandler() {
+    System.out.println("in GlobalControllerExceptionHandler");
+  }
+
   @ResponseStatus(BAD_REQUEST)
   @ExceptionHandler(BadRequestException.class)
   public @ResponseBody HttpErrorInfo handleBadRequestExceptions(
@@ -33,7 +37,8 @@ class GlobalControllerExceptionHandler {
   @ExceptionHandler(NotFoundException.class)
   public @ResponseBody HttpErrorInfo handleNotFoundExceptions(
     ServerHttpRequest request, NotFoundException ex) {
-
+    System.err.println("NOT FOUND"+ex);
+    LOG.error("NOT_FOUND", ex);
     return createHttpErrorInfo(NOT_FOUND, request, ex);
   }
 

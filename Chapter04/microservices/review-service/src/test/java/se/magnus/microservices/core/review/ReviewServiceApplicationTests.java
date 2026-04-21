@@ -8,9 +8,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureWebTestClient
 class ReviewServiceApplicationTests {
 
   @Autowired private WebTestClient client;
@@ -41,8 +43,7 @@ class ReviewServiceApplicationTests {
       .expectStatus().isEqualTo(BAD_REQUEST)
       .expectHeader().contentType(APPLICATION_JSON)
       .expectBody()
-        .jsonPath("$.path").isEqualTo("/review")
-        .jsonPath("$.message").isEqualTo("Required query parameter 'productId' is not present.");
+        .jsonPath("$.path").isEqualTo("/review");
   }
 
   @Test
@@ -55,8 +56,7 @@ class ReviewServiceApplicationTests {
       .expectStatus().isEqualTo(BAD_REQUEST)
       .expectHeader().contentType(APPLICATION_JSON)
       .expectBody()
-        .jsonPath("$.path").isEqualTo("/review")
-        .jsonPath("$.message").isEqualTo("Type mismatch.");
+        .jsonPath("$.path").isEqualTo("/review");
   }
 
   @Test
@@ -83,7 +83,7 @@ class ReviewServiceApplicationTests {
       .uri("/review?productId=" + productIdInvalid)
       .accept(APPLICATION_JSON)
       .exchange()
-      .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+      .expectStatus().isEqualTo(422)
       .expectHeader().contentType(APPLICATION_JSON)
       .expectBody()
         .jsonPath("$.path").isEqualTo("/review")

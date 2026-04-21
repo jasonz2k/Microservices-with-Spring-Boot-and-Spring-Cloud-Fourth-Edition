@@ -30,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
     this.repository = repository;
     this.mapper = mapper;
     this.serviceUtil = serviceUtil;
+    System.out.println ("in ProductServiceImpl");
   }
 
   @Override
@@ -52,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public Mono<Product> getProduct(int productId) {
-
+    System.out.println ("in getProduct/"+productId);
     if (productId < 1) {
       throw new InvalidInputException("Invalid productId: " + productId);
     }
