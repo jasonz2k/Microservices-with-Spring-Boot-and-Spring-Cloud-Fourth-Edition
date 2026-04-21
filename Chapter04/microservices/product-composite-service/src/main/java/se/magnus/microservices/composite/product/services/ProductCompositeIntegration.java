@@ -2,7 +2,7 @@ package se.magnus.microservices.composite.product.services;
 
 import static org.springframework.http.HttpMethod.GET;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +60,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
       String url = productServiceUrl + productId;
       LOG.debug("Will call getProduct API on URL: {}", url);
 
+      LOG.debug("get body: "+restTemplate.getForEntity(url, String.class).getBody());
       Product product = restTemplate.getForObject(url, Product.class);
       LOG.debug("Found a product with id: {}", product.getProductId());
 
@@ -85,7 +86,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
   private String getErrorMessage(HttpClientErrorException ex) {
     try {
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
-    } catch (IOException ioex) {
+    } catch (Exception ioex) {
       return ex.getMessage();
     }
   }
