@@ -2,3 +2,6 @@
 
 # Microservices-with-Spring-Boot-and-Spring-Cloud-Fourth-Edition
 Microservices with Spring Boot &amp; Spring Cloud, Fourth Edition, published by Packt
+
+fix:
+Chapter04: upgrade to Spring boot 4, fix various of coding issue, add swagger-ui
