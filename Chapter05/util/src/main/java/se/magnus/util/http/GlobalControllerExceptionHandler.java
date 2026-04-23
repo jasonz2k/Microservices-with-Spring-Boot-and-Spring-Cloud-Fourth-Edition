@@ -1,31 +1,33 @@
 package se.magnus.util.http;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.MissingRequestValueException;
+import org.springframework.web.server.UnsatisfiedRequestParameterException;
 import se.magnus.api.exceptions.BadRequestException;
 import se.magnus.api.exceptions.InvalidInputException;
 import se.magnus.api.exceptions.NotFoundException;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 class GlobalControllerExceptionHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
-  @ResponseStatus(BAD_REQUEST)
-  @ExceptionHandler(BadRequestException.class)
-  public @ResponseBody HttpErrorInfo handleBadRequestExceptions(
-    ServerHttpRequest request, BadRequestException ex) {
 
+  @ResponseStatus(BAD_REQUEST)
+  @ExceptionHandler(MissingRequestValueException.class)
+  public @ResponseBody HttpErrorInfo handleBadRequestExceptions(
+    ServerHttpRequest request, MissingRequestValueException ex) {
     return createHttpErrorInfo(BAD_REQUEST, request, ex);
   }
 
@@ -37,12 +39,12 @@ class GlobalControllerExceptionHandler {
     return createHttpErrorInfo(NOT_FOUND, request, ex);
   }
 
-  @ResponseStatus(UNPROCESSABLE_ENTITY)
+  @ResponseStatus(UNPROCESSABLE_CONTENT)
   @ExceptionHandler(InvalidInputException.class)
   public @ResponseBody HttpErrorInfo handleInvalidInputException(
     ServerHttpRequest request, InvalidInputException ex) {
 
-    return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
+    return createHttpErrorInfo(UNPROCESSABLE_CONTENT, request, ex);
   }
 
   private HttpErrorInfo createHttpErrorInfo(
