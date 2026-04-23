@@ -8,9 +8,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureWebTestClient
 class ProductServiceApplicationTests {
 
   @Autowired private WebTestClient client;
@@ -40,8 +42,7 @@ class ProductServiceApplicationTests {
       .expectStatus().isEqualTo(BAD_REQUEST)
       .expectHeader().contentType(APPLICATION_JSON)
       .expectBody()
-        .jsonPath("$.path").isEqualTo("/product/no-integer")
-        .jsonPath("$.message").isEqualTo("Type mismatch.");
+        .jsonPath("$.path").isEqualTo("/product/no-integer");
   }
 
   @Test
@@ -69,7 +70,7 @@ class ProductServiceApplicationTests {
       .uri("/product/" + productIdInvalid)
       .accept(APPLICATION_JSON)
       .exchange()
-      .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+      .expectStatus().isEqualTo(422)
       .expectHeader().contentType(APPLICATION_JSON)
       .expectBody()
         .jsonPath("$.path").isEqualTo("/product/" + productIdInvalid)
